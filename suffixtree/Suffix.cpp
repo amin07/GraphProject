@@ -98,7 +98,7 @@ void printSuffixes(TN *nd, string runString){
 	}
 	for(auto n : nd->childs){
 		if(n->leftDiverse && n->nodeMark<0 && n->edge_label.compare(""))
-			cout<<"Maximal repeats: "<<runString+n->edge_label<<endl;
+			cout<<runString+n->edge_label<<endl;
 		printSuffixes(n, runString+n->edge_label);
 	}
 
@@ -106,7 +106,8 @@ void printSuffixes(TN *nd, string runString){
 
 
 int main(){
-	string str = "aabcaabdaabcabyabz";
+	string str;
+	cin>>str;
 	str.append("#");
 
 	TN *tree = buildTree(str);
