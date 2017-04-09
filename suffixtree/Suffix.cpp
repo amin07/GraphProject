@@ -129,7 +129,8 @@ int main(){
 	str.append("#");*/
 
 	//VINT str = {1,1,2,3,1,1,2,-2};
-	VINT str = {1,1,2,3,1,1,2,4,1,1,2,3,-2};
+	//VINT str = {1,1,2,3,1,1,2,4,1,1,2,3,-2};
+	VINT str = {6,3,6,4,6,3,5,1,1,2,7};
 
 	TN *tree = buildTree(str);
 	calculateLeftDiverse(tree, str);
