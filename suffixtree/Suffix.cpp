@@ -1,16 +1,20 @@
 #include "Suffix.h"
 
-int numOfMatchedChar(string str, int start_pos, string str2)
+//int numOfMatchedChar(string str, int start_pos, string str2)
+void vPrint(VINT v){
+	for(auto i:v) cout<<" "<<i; cout<<endl;
+}
+int numOfMatchedChar(VINT str, int start_pos, VINT str2)
 {
 	int ret=0;
-	for(int i=0;i<str2.length();i++){
+	for(int i=0;i<str2.size();i++){
 		if(str2[i]!=str[i+start_pos]) break;
 		ret++;
 	}
 	return ret;
 }
 
-void addSuffix(string str, int start_pos, int suffix_label, TN *currNode){
+void addSuffix(VINT str, int start_pos, int suffix_label, TN *currNode){
 
 	// checking matching child node
 
@@ -20,18 +24,20 @@ void addSuffix(string str, int start_pos, int suffix_label, TN *currNode){
 
 		if(str.at(start_pos)==n->edge_label.at(0)){
 			int matchedLen = numOfMatchedChar(str, start_pos, n->edge_label);
-			if(matchedLen==n->edge_label.length()){
+			if(matchedLen==n->edge_label.size()){
 				addSuffix(str, start_pos+matchedLen, suffix_label, n);
 			}
 			else
 			{
 				// breaking the edge
-				TN *newRoot = new TN(-1, str.substr(start_pos, matchedLen));
+				//TN *newRoot = new TN(-1, str.substr(start_pos, matchedLen));
+				TN *newRoot = new TN(-1, VINT(str.begin()+start_pos , str.begin()+start_pos+matchedLen));
 				//TN *newRoot = new TN(-1, "dummy");
-				//n->updateLabel(n->edge_label.substr(start_pos+matchedLen));
-				n->updateLabel(n->edge_label.substr(matchedLen));
+				//n->updateLabel(n->edge_label.substr(matchedLen));		// from matchedLen pos up to end
+				n->updateLabel(VINT(n->edge_label.begin()+matchedLen , n->edge_label.end()));
 				TN *modifiedChild = n;
-				TN *newChild = new TN(suffix_label, str.substr(start_pos+matchedLen));
+				//TN *newChild = new TN(suffix_label, str.substr(start_pos+matchedLen));
+				TN *newChild = new TN(suffix_label, VINT(str.begin()+start_pos+matchedLen , str.end()));
 
 				newRoot->addChild(modifiedChild);
 				newRoot->addChild(newChild);
@@ -47,13 +53,14 @@ void addSuffix(string str, int start_pos, int suffix_label, TN *currNode){
 	}
 
 	if(matchedFlag==false){
-		currNode->addChild(new TN(suffix_label, str.substr(start_pos)));
+		//currNode->addChild(new TN(suffix_label, str.substr(start_pos)));
+		currNode->addChild(new TN(suffix_label, VINT(str.begin()+start_pos, str.end())));
 	}
 
 }
 
 
-TN * buildTree(string str){
+TN * buildTree(VINT str){
 	TN *root = new TN();
 	root->addChild(new TN(0,str));	// adding full suffix
 
@@ -69,7 +76,8 @@ TN * buildTree(string str){
  * nd : root node of the suffix tree
  * str : string for which nd is a suffix tree
  * */
-bool calculateLeftDiverse(TN *nd, string &str){
+//bool calculateLeftDiverse(TN *nd, string &str){
+bool calculateLeftDiverse(TN *nd, VINT &str){
 
 	if(nd->nodeMark>=0){
 		if(nd->nodeMark>0)
@@ -84,7 +92,7 @@ bool calculateLeftDiverse(TN *nd, string &str){
 
 	if(nd->leftDiverse) return true;
 
-	char firstLeftChar = nd->childs[0]->leftChar;
+	int firstLeftChar = nd->childs[0]->leftChar;
 	for(int i=1;i<nd->childs.size();i++){
 		if(firstLeftChar!=nd->childs[i]->leftChar) {nd->leftDiverse=true; return true;}
 	}
@@ -92,27 +100,41 @@ bool calculateLeftDiverse(TN *nd, string &str){
 	return false;
 }
 
-void printSuffixes(TN *nd, string runString){
+void printSuffixes(TN *nd, VINT runString){
 	if(nd->nodeMark>=0){
-		//cout<<runString<<" "<<nd->nodeMark<<endl;
+		// nothing to do in case of leaves
 	}
 	for(auto n : nd->childs){
-		if(n->leftDiverse && n->nodeMark<0 && n->edge_label.compare(""))
-			cout<<runString+n->edge_label<<endl;
-		printSuffixes(n, runString+n->edge_label);
+
+		//if(n->leftDiverse && n->nodeMark<0 && n->edge_label.compare("")){
+
+		VINT temp = runString;
+		temp.insert(temp.end(),n->edge_label.begin(), n->edge_label.end());
+
+		if(n->leftDiverse && n->nodeMark<0 && n->edge_label.empty()==false)
+		{
+			vPrint(temp);
+		}
+
+		printSuffixes(n, temp);
 	}
 
 }
 
 
 int main(){
+	/*
 	string str;
 	cin>>str;
-	str.append("#");
+	str.append("#");*/
+
+	//VINT str = {1,1,2,3,1,1,2,-2};
+	VINT str = {1,1,2,3,1,1,2,4,1,1,2,3,-2};
 
 	TN *tree = buildTree(str);
 	calculateLeftDiverse(tree, str);
-	printSuffixes(tree, "");
+
+	printSuffixes(tree, {});
 
 
 	return 0;
