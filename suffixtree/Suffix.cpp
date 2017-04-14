@@ -1,5 +1,7 @@
 #include "Suffix.h"
 
+#define DATA_SIZE 10000
+
 //int numOfMatchedChar(string str, int start_pos, string str2)
 void vPrint(VINT v){
 	for(auto i:v) cout<<" "<<i; cout<<endl;
@@ -130,10 +132,19 @@ int main(){
 
 	//VINT str = {1,1,2,3,1,1,2,-2};
 	//VINT str = {1,1,2,3,1,1,2,4,1,1,2,3,-2};
-	VINT str = {6,3,6,4,6,3,5,1,1,2,7};
+	//VINT str = {6,3,6,4,6,3,5,1,1,2,7};*/
+	VINT input_vect;
+	char input_str[DATA_SIZE];
+	fgets(input_str,DATA_SIZE,stdin);
+	char *token = strtok(input_str, " ");
+	do{
+		input_vect.push_back(atoi(token));
+		token = strtok(NULL, " ");
+	}while(token);
+	//vPrint(input_vect);
 
-	TN *tree = buildTree(str);
-	calculateLeftDiverse(tree, str);
+	TN *tree = buildTree(input_vect);
+	calculateLeftDiverse(tree, input_vect);
 
 	printSuffixes(tree, {});
 
