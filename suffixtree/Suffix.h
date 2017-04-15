@@ -8,6 +8,7 @@ typedef vector<int> VINT;
 struct TreeNode
 {
     vector <TreeNode* > childs;
+    VINT start_pos;
     int nodeMark;
     //string edge_label;
     VINT edge_label;
