@@ -53,6 +53,7 @@ class CoreDAG(object):
         allreapts = ''
         while cprocess.poll() is None:
             allreapts += (cprocess.communicate(input=' '.join(map(str,self.__nodeTrack)))[0])
+            #print (cprocess.communicate(input=' '.join(map(str,self.__nodeTrack)))[0])
         #print (allreapts)
         return allreapts
     
@@ -60,11 +61,15 @@ class CoreDAG(object):
         repeats = self.getMaximalRepeats()
         maxGain = -1
         while True:
-            
             #checking which repeat to use
             for repString in repeats.split('\n'):
-                if(len(repString.split()) >=2 ):
-                    print (repString)
+                repString.strip('\n')
+                #print ("a" + repString+"b")
+                if repString != "":
+                    rp,rpoccs = (repString.split('#')[0],repString.split('#')[1])
+                    if  len(rp.split())>=2:
+                       print (rp)
+                       print (rpoccs)
             if maxGain<0:
                 break 
 
@@ -79,6 +84,7 @@ if __name__ == "__main__":
     fileStream = open('input.txt', 'r')
     g = CoreDAG(fileStream)
     g.printSeq()
+    #g.getMaximalRepeats()
     g.lexisFunc()
     
     

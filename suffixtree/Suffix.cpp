@@ -4,7 +4,7 @@
 
 //int numOfMatchedChar(string str, int start_pos, string str2)
 void vPrint(VINT v){
-	for(auto i:v) cout<<" "<<i; cout<<endl;
+	for(auto i:v) cout<<" "<<i;
 }
 int numOfMatchedChar(VINT str, int start_pos, VINT str2)
 {
@@ -82,13 +82,16 @@ TN * buildTree(VINT str){
 bool calculateLeftDiverse(TN *nd, VINT &str){
 
 	if(nd->nodeMark>=0){
-		if(nd->nodeMark>0)
+		if(nd->nodeMark>0){
 			nd->leftChar = str[nd->nodeMark-1];
+		}
+		nd->start_pos.push_back(nd->nodeMark);
 		return false;
 	}
 	else{
 		for(auto n:nd->childs){
 			nd->leftDiverse = calculateLeftDiverse(n, str) || nd->leftDiverse;
+			nd->start_pos.insert(nd->start_pos.end(), n->start_pos.begin(), n->start_pos.end());
 		}
 	}
 
@@ -115,7 +118,11 @@ void printSuffixes(TN *nd, VINT runString){
 
 		if(n->leftDiverse && n->nodeMark<0 && n->edge_label.empty()==false)
 		{
+			// passing each maximal repeat info to python module in a format
 			vPrint(temp);
+			cout<<" #";
+			vPrint(n->start_pos);
+			cout<<endl;
 		}
 
 		printSuffixes(n, temp);
@@ -133,6 +140,7 @@ int main(){
 	//VINT str = {1,1,2,3,1,1,2,-2};
 	//VINT str = {1,1,2,3,1,1,2,4,1,1,2,3,-2};
 	//VINT str = {6,3,6,4,6,3,5,1,1,2,7};*/
+
 	VINT input_vect;
 	char input_str[DATA_SIZE];
 	fgets(input_str,DATA_SIZE,stdin);
@@ -148,6 +156,13 @@ int main(){
 
 	printSuffixes(tree, {});
 
+
+	/*
+	VINT testv = {1,2,3};
+	VINT testv2 = {4,5,6};
+	testv.insert(testv.end(),testv2.begin(),testv2.end());
+	vPrint(testv);
+	*/
 
 	return 0;
 }
