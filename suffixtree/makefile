@@ -1,10 +1,10 @@
 all: Suffix.exe
   
 clean:
-	rm Suffix.o Suffix.exe
+	rm Suffix.o Suffix.exe Ukkenons.o
   
-Suffix.exe: Suffix.o
-	g++ -std=c++11 -g -o Suffix.exe Suffix.o
+Suffix.exe: Ukkenons.o
+	g++ -std=c++11 -g -o Suffix.exe Ukkenons.o
   
-Suffix.o: Suffix.cpp
-	g++ -std=c++11 -c -g Suffix.cpp
+Ukkenons.o: Ukkenons.cpp
+	g++ -std=c++11 -c -g Ukkenons.cpp
