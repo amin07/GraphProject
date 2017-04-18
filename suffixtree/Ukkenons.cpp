@@ -10,15 +10,40 @@ int _suffixToBeAdded = 0;
 _tnode *root;
 _vint input_vect;
 
+
+int getNextElement(int );
 void vPrint(_vint v){
 	for(auto i:v) cout<<" "<<i;
+
 }
 
+void testGetNextElement(){
+	// unit test function to test getNextElement method
+
+	// set up
+	int input_seq[] = {1,2,3,1,2,4,1};
+	input_vect.assign(input_seq, input_seq+sizeof(input_seq)/sizeof(int));
+	//vPrint(input_vect);
+
+	_tnode *head = new _tnode();
+	head->addChild(1,new _tnode({0,2}));
+	head->addChild(2,new _tnode({1,2}));
+	head->addChild(3,new _tnode({2,2}));
+	anode = head;
+	alen = 2;
+	aedge = 0;
+	cout<<"next element should be 3, we get "<<getNextElement(5)<<endl;
+
+}
 int getNextElement(int curr_pos){
 	int curr_element = input_vect[curr_pos];
-	_tnode *nodeDir = anode->childs[curr_element];
+	//cout<<curr_element<<endl;
+	//return 0;
+	_tnode *nodeDir = anode->childs[input_vect[aedge]];
 	int edgeLen =  (nodeDir->edge_label.second-nodeDir->edge_label.first);
-	if(edgeLen>= alen){
+	//cout<<"edge len"<<edgeLen<<endl;
+	//cout<<"alen"<<alen<<endl;
+	if(edgeLen>=alen){
 		return input_vect[nodeDir->edge_label.first+alen];
 	}
 	if((edgeLen+1) == alen){
@@ -37,7 +62,7 @@ int getNextElement(int curr_pos){
 }
 void buildPhases(int start_pos){
 	_end++;
-	_tnode *lastNode = 0;
+	_tnode *lastIntNode = 0;
 	_suffixToBeAdded++;
 
 	while(_suffixToBeAdded > 0){
@@ -53,7 +78,19 @@ void buildPhases(int start_pos){
 			}
 		}
 		else{
+			// getting the next element in case active len not 0
 			int nextElm = getNextElement(start_pos);
+
+			if(nextElm==input_vect[start_pos]){
+
+				if(lastIntNode){
+					lastIntNode->suffix_link = anode[input_vect[aedge]];
+				}
+			}
+			else{
+
+			}
+
 		}
 	}
 }
@@ -65,7 +102,8 @@ _tnode * buildTree(_vint input_vect){
 	_ap.active_len = 0;
 
 
-	for(int i=0;i<input_vect.size();i++){
+	for(int i=0;i<input_vect.size();i++)
+	{
 		buildPhases(i);
 	}
 
@@ -87,7 +125,9 @@ int main()
 	}while(token);
 
 
+	//testGetNextElement();
 	_tnode *tree = buildTree(input_vect);
+
 	//calculateLeftDiverse(tree, input_vect);
 
 	//printSuffixes(tree, {});

@@ -69,7 +69,6 @@ TN * buildTree(VINT str){
 	for(int i=1;i<str.size();i++){
 		addSuffix(str, i,i,root);
 	}
-
 	return root;
 }
 /*
