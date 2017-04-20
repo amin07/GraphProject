@@ -1,4 +1,5 @@
 #include "Ukkenons.h"
+
 #define DATA_SIZE 10000
 ActivePoint _ap;
 #define anode _ap.active_node
@@ -16,8 +17,8 @@ int getNextElement(int );
 void vPrint(_vint v){
 	for(auto i:v) cout<<" "<<i;
 }
-void vPrint(_vint v, _pair p){
-	for(int i=p.first;i<=p.second;i++) cout<<" "<<v[i];
+void vPrint(int start_pos){
+	for(int i=start_pos;i<input_vect.size();i++) cout<<" "<<input_vect[i];
 }
 
 void testGetNextElement(){
@@ -46,7 +47,7 @@ int getNextElement(int curr_pos){
 	_tnode *nodeDir = anode->childs[input_vect[aedge]];
 
 	int edgeLen =  (nodeDir->_end->end_val-nodeDir->_start);
-	cout<<"\ninside getnextel "<<nodeDir->_start<<" "<<edgeLen<<" "<<alen<<" "<<curr_element<<" "<<aedge<<endl;
+	debug_stmt(cout<<"\ninside getnextel "<<nodeDir->_start<<" "<<edgeLen<<" "<<alen<<" "<<curr_element<<" "<<aedge<<endl;)
 
 	if(edgeLen>=alen){
 		return input_vect[nodeDir->_start+alen];
@@ -70,7 +71,7 @@ int getNextElement(int curr_pos){
 		//aedge = aedge + tempalen;
 		//nodeDir = anode->childs[input_vect[aedge]];
 		//if(nodeDir==NULL) cout<<"this"<<endl;
-		//cout<<"foitta before return "<<anode->_start<<" "<<alen<<"  "<<aedge<<endl;
+		debug_stmt(cout<<"foitta before return "<<anode->_start<<" "<<alen<<"  "<<aedge<<endl;)
 		return getNextElement(curr_pos);
 	}
 }
@@ -78,19 +79,19 @@ void buildPhases(int start_pos){
 	_end->end_val++;
 	_tnode *lastIntNode = 0;
 	_suffixToBeAdded++;
-	cout<<"end val "<<_end->end_val<<" ";
+	debug_stmt(cout<<"end val "<<_end->end_val<<" ";)
 	while(_suffixToBeAdded > 0){
 		if(_ap.active_len==0){
 			if(anode->childs.find(input_vect[start_pos])!=anode->childs.end()){
-				cout<<"if if"<<endl;
+				debug_stmt(cout<<"if if"<<endl;)
 				// show stopper
 				_ap.active_edge = anode->childs[input_vect[start_pos]]->_start;
 				_ap.active_len++;
-				cout<<" active edge "<<aedge<<"alen "<<alen<<endl;
+				debug_stmt(cout<<" active edge "<<aedge<<"alen "<<alen<<endl;)
 				break;
 			}
 			else{
-				cout<<"if else"<<endl;
+				debug_stmt(cout<<"if else"<<endl;)
 				_tnode *newChild = new _tnode(start_pos,_end);
 				root->addChild(input_vect[start_pos],newChild);
 				_suffixToBeAdded--;
@@ -103,7 +104,7 @@ void buildPhases(int start_pos){
 
 
 			if(nextElm==-1){	// a leaf node need to be added here
-				cout<<"else if -1"<<endl;
+				debug_stmt(cout<<"else if -1"<<endl;)
 				_tnode *newLeaf = new _tnode(start_pos,_end);
 				anode->childs[input_vect[aedge]]->addChild(input_vect[start_pos],newLeaf);
 
@@ -123,19 +124,19 @@ void buildPhases(int start_pos){
 				}
 
 				_suffixToBeAdded--;
-				cout<<" active edge "<<aedge<<"alen "<<alen<<endl;
+				debug_stmt(cout<<" active edge "<<aedge<<"alen "<<alen<<endl;)
 				continue;
 			}
 
 			if(nextElm==input_vect[start_pos]){
-				cout<<"else if"<<endl;
+				debug_stmt(cout<<"else if"<<endl;)
 				if(lastIntNode){
 					lastIntNode->suffix_link = anode->childs[input_vect[aedge]];
 				}
 
 				// updating active len and other things
 				_tnode *currNode = anode->childs[input_vect[aedge]];
-				cout<<"comparison"<<currNode->_end->end_val<<"-"<<currNode->_start<<" "<<alen<<endl;
+				debug_stmt(cout<<"comparison"<<currNode->_end->end_val<<"-"<<currNode->_start<<" "<<alen<<endl;)
 
 				if(currNode->_end->end_val-currNode->_start < alen){
 					anode = currNode;
@@ -145,11 +146,11 @@ void buildPhases(int start_pos){
 				else {
 					alen++;
 				}
-				cout<<" active edge "<<aedge<<"alen "<<alen<<endl;
+				debug_stmt(cout<<" active edge "<<aedge<<"alen "<<alen<<endl;)
 				break;
 			}
 			else{
-				cout<<"else else"<<endl;
+				debug_stmt(cout<<"else else"<<endl;)
 				_tnode *currNode = anode->childs[input_vect[aedge]];
 
 				int currentStart = currNode->_start;
@@ -184,22 +185,85 @@ void buildPhases(int start_pos){
 			}
 
 		}
-		cout<<" active edge "<<aedge<<"alen "<<alen<<endl;
+		debug_stmt(cout<<" active edge "<<aedge<<"alen "<<alen<<endl;)
 	}
 }
 
 void printTreeNodes(_tnode *tree){
 
 	if(tree!=root){
-		cout<<tree->_start<<" "<<tree->_end->end_val;
-		if(tree->nodeMark==-1) cout<<" internal"<<endl;
-		else cout<<" leaf"<<endl;
+
+		cout<<"nodeMark "<<tree->nodeMark<<" [s-e] "<<tree->_start<<"-"<<tree->_end->end_val<<endl;
+		/*if(tree->nodeMark==-1){}
+		else{
+			cout<<"suffix started at "<<tree->nodeMark<<endl;
+			vPrint(tree->nodeMark);
+			cout<<endl;
+
+		}*/
 	}
 	MM::iterator it=tree->childs.begin();
 	if(it==tree->childs.end()) return;
 	for(;it!=tree->childs.end();++it){
 		printTreeNodes(it->second);
 	}
+}
+
+void printMaxRepeats(_tnode *tree){
+	if(tree!=root){
+		if(tree->leftDiverse){
+			cout<<"maximal repeat, starts from"<<endl;
+			vPrint(tree->start_pos);
+			cout<<endl;cout<<"ends at "<<tree->_end->end_val<<endl;
+		}
+	}
+	MM::iterator it=tree->childs.begin();
+	if(it==tree->childs.end()) return;
+	for(;it!=tree->childs.end();++it){
+		printMaxRepeats(it->second);
+	}
+}
+
+// recursive procedure mark every leaf node with start pos of suffix it reps
+void assignNodeMarker(_tnode *node, int cumLen){
+	if(node->childs.empty()){
+		cout<<"cumLen "<<cumLen<<" nodeMark "<<node->nodeMark<<" [s-e] "<<node->_start<<"-"<<node->_end->end_val<<endl;
+		node->nodeMark = node->_start-cumLen;
+		return ;
+	}
+	for(MM::iterator it=node->childs.begin();it!=node->childs.end();++it){
+		assignNodeMarker(it->second, (cumLen+(node->_end->end_val - node->_start+1)));
+	}
+}
+
+// recursive function for calculating left diverseness hence maximal repeats
+bool calcLeftDiverse(_tnode *node){
+	cout<<"here "<<node->nodeMark<<" "<<node->_start<<endl;
+	if(node->nodeMark>=0){
+		if(node->nodeMark>0)
+			node->leftChar = input_vect[node->nodeMark-1];
+		node->start_pos.push_back(node->nodeMark);
+		return false;
+	}
+
+	for(MM::iterator it=node->childs.begin();it!=node->childs.end();++it){
+		node->leftDiverse = calcLeftDiverse(it->second) || node->leftDiverse;
+		node->start_pos.insert(node->start_pos.end(),it->second->start_pos.begin(),it->second->start_pos.end());
+	}
+
+	if(node->leftDiverse) return true;
+	unordered_set<int> dup_set;
+
+	for(MM::iterator it=node->childs.begin();it!=node->childs.end();++it){
+		if(it==node->childs.begin()) {dup_set.insert(it->second->leftChar);continue;}
+
+		if(dup_set.find(it->second->leftChar)==dup_set.end()){
+			node->leftDiverse = true; return true;
+		}
+	}
+	node->leftChar = node->childs.begin()->second->leftChar;
+	return false;
+
 }
 
 _tnode * buildTree(_vint input_vect){
@@ -222,7 +286,7 @@ _tnode * buildTree(_vint input_vect){
 int main()
 {
 
-	cout<<"Ukkenon's program.."<<endl;
+	cout<<"Ukkenon's program..."<<endl;
 
 	char input_str[DATA_SIZE];
 	fgets(input_str,DATA_SIZE,stdin);
@@ -236,9 +300,12 @@ int main()
 	input_vect.push_back(100);		// adding unique last char
 	//testGetNextElement();
 	vPrint(input_vect);
+	cout<<endl;
 	_tnode *tree = buildTree(input_vect);
 
-	//_tnode *obj = tree->childs[1];
+	assignNodeMarker(tree, -1);		// has to call with -1 because of root label is 0,0
+	//calcLeftDiverse(tree);
+	//printMaxRepeats(tree);
 
 	printTreeNodes(tree);
 	/*

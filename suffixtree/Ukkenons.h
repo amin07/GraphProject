@@ -6,7 +6,15 @@
 #include<cstdio>
 #include<utility>
 #include<unordered_map>
+#include<unordered_set>
 using namespace std;
+
+#ifdef DEBUG
+#define debug_stmt(x) x
+#else
+#define debug_stmt(x)
+#endif
+
 typedef vector<int> _vint;
 typedef pair<int, int> _pair;
 struct _End{
@@ -25,7 +33,7 @@ struct TreeNode
     int nodeMark;
     bool leftDiverse;
     int leftChar;
-    TreeNode(){nodeMark=-1;leftDiverse=false;leftChar=-1;}
+    TreeNode(){nodeMark=-1;leftDiverse=false;leftChar=-1;_start=0;_end=new _End(0);}
     //TreeNode(_pair label):edge_label(label){leftDiverse=false;leftChar=-2;}
     TreeNode(int st, _End *e):_start(st),_end(e){leftDiverse=false;leftChar=-2;}
     void addChild(int key, TreeNode *node){this->childs.insert({key,node});}
