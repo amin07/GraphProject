@@ -17,8 +17,8 @@ int getNextElement(int );
 void vPrint(_vint v){
 	for(auto i:v) cout<<" "<<i;
 }
-void vPrint(int start_pos){
-	for(int i=start_pos;i<input_vect.size();i++) cout<<" "<<input_vect[i];
+void vPrint(int start_pos, int len){
+	for(int i=start_pos;i<start_pos+len;i++) cout<<" "<<input_vect[i];
 }
 
 void testGetNextElement(){
@@ -193,7 +193,7 @@ void printTreeNodes(_tnode *tree){
 
 	if(tree!=root){
 
-		cout<<"nodeMark "<<tree->nodeMark<<" [s-e] "<<tree->_start<<"-"<<tree->_end->end_val<<endl;
+		debug_stmt(cout<<"nodeMark "<<tree->nodeMark<<" [s-e] "<<tree->_start<<"-"<<tree->_end->end_val<<endl;)
 		/*if(tree->nodeMark==-1){}
 		else{
 			cout<<"suffix started at "<<tree->nodeMark<<endl;
@@ -208,26 +208,31 @@ void printTreeNodes(_tnode *tree){
 		printTreeNodes(it->second);
 	}
 }
-
-void printMaxRepeats(_tnode *tree){
+// recursive procedure for printing maximal repeats
+void printMaxRepeats(_tnode *tree, int currLen){
 	if(tree!=root){
 		if(tree->leftDiverse){
-			cout<<"maximal repeat, starts from"<<endl;
+			//cout<<"maximal repeat, starts from"<<endl;
+			// format maximal repeat # occurences, used to extract repeats in python module
+			vPrint(tree->start_pos[0],currLen+(tree->_end->end_val - tree->_start +1));
+			cout<<" #";
 			vPrint(tree->start_pos);
-			cout<<endl;cout<<"ends at "<<tree->_end->end_val<<endl;
+			cout<<endl;
+			//cout<<"repeat length: "<<currLen+(tree->_end->end_val - tree->_start +1)<<endl;
+			//cout<<endl;cout<<"ends at "<<tree->_end->end_val<<endl;
 		}
 	}
 	MM::iterator it=tree->childs.begin();
 	if(it==tree->childs.end()) return;
 	for(;it!=tree->childs.end();++it){
-		printMaxRepeats(it->second);
+		printMaxRepeats(it->second, currLen+(tree->_end->end_val - tree->_start +1));
 	}
 }
 
 // recursive procedure mark every leaf node with start pos of suffix it reps
 void assignNodeMarker(_tnode *node, int cumLen){
 	if(node->childs.empty()){
-		cout<<"cumLen "<<cumLen<<" nodeMark "<<node->nodeMark<<" [s-e] "<<node->_start<<"-"<<node->_end->end_val<<endl;
+		debug_stmt(cout<<"cumLen "<<cumLen<<" nodeMark "<<node->nodeMark<<" [s-e] "<<node->_start<<"-"<<node->_end->end_val<<endl;)
 		node->nodeMark = node->_start-cumLen;
 		return ;
 	}
@@ -238,7 +243,7 @@ void assignNodeMarker(_tnode *node, int cumLen){
 
 // recursive function for calculating left diverseness hence maximal repeats
 bool calcLeftDiverse(_tnode *node){
-	cout<<"here "<<node->nodeMark<<" "<<node->_start<<endl;
+	debug_stmt(cout<<"here "<<node->nodeMark<<" "<<node->_start<<endl;)
 	if(node->nodeMark>=0){
 		if(node->nodeMark>0)
 			node->leftChar = input_vect[node->nodeMark-1];
@@ -286,7 +291,7 @@ _tnode * buildTree(_vint input_vect){
 int main()
 {
 
-	cout<<"Ukkenon's program..."<<endl;
+	//cout<<"Ukkenon's program..."<<endl;
 
 	char input_str[DATA_SIZE];
 	fgets(input_str,DATA_SIZE,stdin);
@@ -299,15 +304,15 @@ int main()
 
 	input_vect.push_back(100);		// adding unique last char
 	//testGetNextElement();
-	vPrint(input_vect);
-	cout<<endl;
+	//vPrint(input_vect);
+	//cout<<endl;
 	_tnode *tree = buildTree(input_vect);
 
 	assignNodeMarker(tree, -1);		// has to call with -1 because of root label is 0,0
-	//calcLeftDiverse(tree);
-	//printMaxRepeats(tree);
+	calcLeftDiverse(tree);
+	printMaxRepeats(tree, -1);
 
-	printTreeNodes(tree);
+	//printTreeNodes(tree);
 	/*
 	MM::iterator it;
 	for(it=tree->childs.begin();it!=tree->childs.end();++it){
