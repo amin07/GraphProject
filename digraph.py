@@ -4,7 +4,7 @@ import subprocess
 from sys import stdin
 import networkx as nx
 from _thread import _count
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 
 class CoreDAG(object):
@@ -48,9 +48,12 @@ class CoreDAG(object):
         print ([j for j in range(len(self.__nodeTrack))])
         print (self.__edgeToNode)
         
-               
+    def getTheGraph(self):
+        return self.__lexisGraph           
     def printSeq(self):
         print (self.__intSequences)
+    def getNodeLabels(self):
+        return self.__nodeString
         
      
     def getMaximalRepeats(self):
@@ -102,7 +105,7 @@ class CoreDAG(object):
                     self.__adjList[currnode]=[self.__nodeTrack[i]]
                 else :
                     self.__adjList[currnode].append(self.__nodeTrack[i])
-        
+        print ("print adjacency list..")
         print (self.__adjList)
         # constructing actual DAG
         for target_node in self.__adjList:
@@ -111,14 +114,17 @@ class CoreDAG(object):
             for edge2thisnode in self.__adjList[target_node]:
             #    if edge2thisnode not in self.__lexisGraph:
             #        self.__lexisGraph.add
-                self.__lexisGraph.add_edge(edge2thisnode, target_node)
+                self.__lexisGraph.add_edge(edge2thisnode, target_node)      # adding nodes automatically
                 
         #nx.draw(self.__lexisGraph, pos = nx.spring_layout(self.__lexisGraph))
         #plt.axis('off')
-        for i in (self.__lexisGraph.nodes()):
-            if self.__lexisGraph.in_degree(i)==0:
-                print (self.__symDic[i])
-                
+        
+#         print ("printing source nodes(should be equal to distinct # of characters)")
+#         for i in (self.__lexisGraph.nodes()):
+#             if self.__lexisGraph.in_degree(i)==0:
+#                 print (self.__symDic[i])
+    
+    # recursive function for assigning string label of each node
     def stringOnEachNode(self, currnode):
         #print ('calculating string on each node...')
         if len(self.__adjList[currnode])==0:
@@ -170,6 +176,7 @@ class CoreDAG(object):
             #print (maxGainRp)
         self.constructDAG()
         self.stringOnEachNode(0)
+        print ("print string on each node..")
         print (self.__nodeString)
 
 if __name__ == "__main__":
@@ -185,5 +192,15 @@ if __name__ == "__main__":
     g.printSeq()
     #g.getMaximalRepeats()
     g.lexisFunc()
+    G = g.getTheGraph()
+    nodeLabels = g.getNodeLabels()
+    #print (nodeLabels)
+    print ([len(i) for i in nodeLabels.values()])
+    pos = nx.spring_layout(G)
+    nx.draw_networkx_nodes(G, pos, node_size=[300*len(i) for i in nodeLabels.values()])
+    nx.draw_networkx_edges(G, pos)
+    nx.draw_networkx_labels(G, pos, nodeLabels)
+    #nx.draw_networkx_edges(G, pos, edgelist=black_edges, arrows=False)
+    plt.show()
     
     
