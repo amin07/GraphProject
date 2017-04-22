@@ -192,9 +192,9 @@ if __name__ == "__main__":
     g.printSeq()
     #g.getMaximalRepeats()
     g.lexisFunc()
+     
     G = g.getTheGraph()
     nodeLabels = g.getNodeLabels()
-    #print (nodeLabels)
     print ([len(i) for i in nodeLabels.values()])
     pos = nx.spring_layout(G)
     nx.draw_networkx_nodes(G, pos, node_size=[300*len(i) for i in nodeLabels.values()])
@@ -202,5 +202,5 @@ if __name__ == "__main__":
     nx.draw_networkx_labels(G, pos, nodeLabels)
     #nx.draw_networkx_edges(G, pos, edgelist=black_edges, arrows=False)
     plt.show()
-    
+     
     

@@ -46,8 +46,21 @@ int getNextElement(int curr_pos){
 
 	_tnode *nodeDir = anode->childs[input_vect[aedge]];
 
+	/*
+	if(nodeDir==NULL) {
+		cout<<"muri active edge"<<aedge<<endl;
+		cout<<"element "<<input_vect[aedge]<<endl;
+		cout<<"muri kha"<<endl;
+		for(MM::iterator it=anode->childs.begin();it!=anode->childs.end();++it){
+			cout<<" "<<it->first<<" "<<anode->childs[it->first]<<" "<<it->second<<endl;
+
+		}
+		return -1;
+
+	}*/
+
 	int edgeLen =  (nodeDir->_end->end_val-nodeDir->_start);
-	debug_stmt(cout<<"\ninside getnextel "<<nodeDir->_start<<" "<<edgeLen<<" "<<alen<<" "<<curr_element<<" "<<aedge<<endl;)
+	debug_stmt(cout<<"\ninside  getnextel "<<nodeDir->_start<<" "<<edgeLen<<" "<<alen<<" "<<curr_element<<" "<<aedge<<endl;)
 
 	if(edgeLen>=alen){
 		return input_vect[nodeDir->_start+alen];
@@ -64,6 +77,7 @@ int getNextElement(int curr_pos){
 		int tempanodestart = anode->_start;
 		anode = nodeDir;
 		//int tempalen = alen;
+		// here caused 12 hours of debuggin...grrrrrrrrrh
 		alen = alen - edgeLen-1;
 		aedge = aedge + edgeLen + 1;
 		//aedge =  edgeLen + tempalen + 1;
@@ -76,6 +90,7 @@ int getNextElement(int curr_pos){
 	}
 }
 void buildPhases(int start_pos){
+
 	_end->end_val++;
 	_tnode *lastIntNode = 0;
 	_suffixToBeAdded++;
@@ -109,12 +124,14 @@ void buildPhases(int start_pos){
 				anode->childs[input_vect[aedge]]->addChild(input_vect[start_pos],newLeaf);
 
 				if(lastIntNode){
-					lastIntNode->suffix_link = anode;
+					// this assignment mistake caused my 4 hours
+					//lastIntNode->suffix_link = anode;
+					lastIntNode->suffix_link = anode->childs[input_vect[aedge]];
 				}
 
 				// just made anode an internal one
-				lastIntNode = anode;
-
+				//lastIntNode = anode;
+				lastIntNode = anode->childs[input_vect[aedge]];
 				if(anode==root){
 					aedge++;
 					alen--;
@@ -163,7 +180,16 @@ void buildPhases(int start_pos){
 				newInternalNode->addChild(input_vect[alen+newInternalNode->_start], currNode);
 				newInternalNode->addChild(input_vect[start_pos], newLeafNode);
 				// replacing newInternal node with previous node
-				anode->childs[input_vect[newInternalNode->_start]] = newInternalNode;
+				/*if(input_vect[newInternalNode->_start]==12) {
+					cout<<"yes, i am messing"<<endl;
+					cout<<newInternalNode<<endl;
+				}*/
+
+				anode->childs.erase(input_vect[newInternalNode->_start]);
+				anode->addChild(input_vect[newInternalNode->_start], newInternalNode);
+
+				//anode->childs[input_vect[newInternalNode->_start]] = newInternalNode;
+
 				if(lastIntNode){
 					lastIntNode->suffix_link = newInternalNode;
 				}
@@ -182,6 +208,10 @@ void buildPhases(int start_pos){
 				}
 
 				_suffixToBeAdded--;
+				/*
+				if(newInternalNode==NULL||newLeafNode==NULL){
+					cout<<"this is happening in some point"<<endl;
+				}*/
 			}
 
 		}
@@ -295,6 +325,7 @@ int main()
 
 	char input_str[DATA_SIZE];
 	fgets(input_str,DATA_SIZE,stdin);
+	//cout<<strlen(input_str)<<endl;
 	char *token = strtok(input_str, " ");
 	do{
 		input_vect.push_back(atoi(token));
@@ -302,7 +333,11 @@ int main()
 	}while(token);
 
 
-	input_vect.push_back(100);		// adding unique last char
+	input_vect.push_back(-120);		// adding unique last char
+
+	//cout<<input_str<<endl;
+	//cout<<strlen(input_str)<<endl;
+	//vPrint(input_vect);
 	//testGetNextElement();
 	//vPrint(input_vect);
 	//cout<<endl;

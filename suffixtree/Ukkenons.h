@@ -36,7 +36,15 @@ struct TreeNode
     TreeNode(){nodeMark=-1;leftDiverse=false;leftChar=-1;_start=0;_end=new _End(0);}
     //TreeNode(_pair label):edge_label(label){leftDiverse=false;leftChar=-2;}
     TreeNode(int st, _End *e):_start(st),_end(e){leftDiverse=false;leftChar=-2;}
-    void addChild(int key, TreeNode *node){this->childs.insert({key,node});}
+    void addChild(int key, TreeNode *node){
+    	//cout<<"in adding child"<<endl;
+    	//if(node==NULL){cout<<"wtf!why you adding null node"<<endl;}
+    	this->childs.insert({key,node});
+
+    	/*if(key==12){
+    		cout<<"this is node i just added "<<node<<endl;
+    	}*/
+    }
     //void updateLabel(_pair n){edge_label=n;}
 };
 typedef TreeNode _tnode;
