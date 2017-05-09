@@ -11,5 +11,5 @@ Build Instructions:
 3. System must have C++ 11
 4. The python module digraph.py can be run in python interpreter using python 3.5
 5. The code is written so that it can be run on three different data sets (simple input, yeast & igem)
-6. Proper line should be uncommented in the beginning of main and __init__ to run correct data set in digraph.py
+6. Proper line should be uncommented in the beginning of main to select data set
  

@@ -30,41 +30,19 @@ class CoreDAG(object):
     _totSymCnt = 0
     
     
-    def __init__(self, textData):
+    def __init__(self, fileName):
         
-        # uncomment one, which you want to run. should be similar as in main
         
-        #tData = self.dataSetup(textData, 'igem');
-        #tData = self.dataSetup(textData, 'simple_input');
-        tData = self.dataSetup(textData, 'yeast');
-
-        # this section was for preparing data, but they now transfered to dataSetup method
-#         _charDic = {}
-#         _countDic = {}
-#         _counter = 1
-#         _processedSeq = ''
-#         for i in range(len(tData)):
-#             if tData[i] not in _countDic:
-#                 _countDic[tData[i]] = _counter
-#                 _charDic[_counter] = tData[i]
-#                 _counter +=1
-#             _processedSeq += str(_countDic[tData[i]]) + ' '
-#         self.__symDic = _charDic
-#         self.__intSequences = _processedSeq
-#         self.__newSymbol = _counter
+        fileStream = open(fileName, 'r')
         
-        # initializing nodetrack from the intSequences
-#         self.__nodeTrack.extend(map(int, self.__intSequences.split()))
-#         self.__edgeToNode.extend(0 for val in range(len(self.__nodeTrack)))
-#         self.__nodeTrack.append(self.__newSymbol)
-#         self.__edgeToNode.append(self.__newSymbol)
-#         self.__uniqueSymbols.append(self.__newSymbol)
-#         self.__uniqueSymbolids.append(len(self.__nodeTrack)-1)
-#         self.__newSymbol += 1
-#         print (self.__nodeTrack)
-#         print ([j for j in range(len(self.__nodeTrack))])
-#         print (self.__edgeToNode)
-
+        if fileName=='test_data/yeastProteins1K.txt':
+            tData = self.dataSetup(fileStream, 'simple_input');
+        elif fileName == 'test_data/igem.txt':
+            tData = self.dataSetup(fileStream, 'igem');
+        elif fileName == 'test_data/input.txt':
+            tData = self.dataSetup(fileStream, 'yeast');
+        
+        
         # updated initialization considering the case of multiple targets
 
         for val in self.__intSequences.split():
@@ -83,7 +61,7 @@ class CoreDAG(object):
         print (self.__edgeToNode)
         
     def dataSetup(self, fStream,dataType):
-        #fStream = open('test_data/igem.txt','r');
+        
         tData = fStream.read()
         if dataType=='igem':
             print ('igem Processing')       # this processing for multiple target nodes
@@ -247,21 +225,7 @@ class CoreDAG(object):
                     
         print (self.__lexisGraph.nodes())
         print (self.__lexisGraph.edges()) 
-        #print (self.__lexisGraph.edges())
-#             #if target_node not in self.__lexisGraph:
-#             #        self.__lexisGraph.add_node(target_node)
-#             for edge2thisnode in self.__adjList[target_node]:
-#             #    if edge2thisnode not in self.__lexisGraph:
-#             #        self.__lexisGraph.add
-#                 self.__lexisGraph.add_edge(edge2thisnode, target_node)      # adding nodes automatically
-#                 
-#         #nx.draw(self.__lexisGraph, pos = nx.spring_layout(self.__lexisGraph))
-#         #plt.axis('off')
-        
-#         print ("printing source nodes(should be equal to distinct # of characters)")
-#         for i in (self.__lexisGraph.nodes()):
-#             if self.__lexisGraph.in_degree(i)==0:
-#                 print (self.__symDic[i])
+
     
     # recursive function for assigning string label of each node
     def stringOnEachNode(self, currnode):
@@ -415,12 +379,17 @@ start_time = time.time()
         
 if __name__ == "__main__":
     
-    # uncomment one, which you want to run. should be similar as in __init__
-    fileStream = open('test_data/yeastProteins1K.txt', 'r')
-    #fileStream = open('test_data/input.txt', 'r')
-    #fileStream = open('test_data/igem.txt', 'r')
+    # uncomment one, to select data set you want to work on
     
-    g = CoreDAG(fileStream)
+    fileName = 'test_data/input.txt'
+    #fileName = 'test_data/igem.txt'
+    #fileName = 'test_data/yeastProteins1K.txt'
+    
+    
+    
+    #fileStream = open(fileName, 'r')
+    
+    g = CoreDAG(fileName)
     g.printSeq()
     g.lexisFunc()
      
@@ -432,8 +401,9 @@ if __name__ == "__main__":
     nodeLabels = g.getNodeLabels()
     print ([len(i) for i in nodeLabels.values()])
     
-    outFile = open('output/outputYeast.txt','w')
-    g.calculateNodeScore(outFile)
+    if fileName=='test_data/yeastProteins1K.txt':
+        outFile = open('output/outputYeast.txt','w')
+        g.calculateNodeScore(outFile)
     
     
 #     pos = nx.spring_layout(G)
